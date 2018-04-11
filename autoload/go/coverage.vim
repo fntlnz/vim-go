@@ -165,7 +165,7 @@ function! go#coverage#genmatch(cov) abort
   if a:cov.startline == a:cov.endline
     call add(matches, {
           \ 'group': color,
-          \ 'pos': [[a:cov.startline, a:cov.startcol, a:cov.endcol - a:cov.startcol]],
+          \ 'pos': a:cov.startline,
           \ 'priority': 2,
           \ })
     return matches
@@ -176,7 +176,7 @@ function! go#coverage#genmatch(cov) abort
   " but that's only way of fixing the issue
   call add(matches, {
         \ 'group': color,
-        \ 'pos': [[a:cov.startline, a:cov.startcol, 200]],
+        \ 'pos': a:cov.startline,
         \ 'priority': 2,
         \ })
 
@@ -186,7 +186,7 @@ function! go#coverage#genmatch(cov) abort
     let start_line += 1
     call add(matches, {
           \ 'group': color,
-          \ 'pos': [[start_line]],
+          \ 'pos': start_line,
           \ 'priority': 2,
           \ })
   endwhile
@@ -194,7 +194,7 @@ function! go#coverage#genmatch(cov) abort
   " finally end columns
   call add(matches, {
         \ 'group': color,
-        \ 'pos': [[a:cov.endline, a:cov.endcol-1]],
+        \ 'pos': a:cov.endline,
         \ 'priority': 2,
         \ })
 
@@ -216,12 +216,6 @@ function! go#coverage#overlay(file) abort
 
   " first mark all lines as goCoverageNormalText. We use a custom group to not
   " interfere with other buffers highlightings. Because the priority is
-  " lower than the cover and uncover matches, it'll be overridden.
-  let cnt = 1
-  while cnt <= line('$')
-    call add(matches, {'group': 'goCoverageNormalText', 'pos': [cnt], 'priority': 1})
-    let cnt += 1
-  endwhile
 
   let fname = expand('%')
 
@@ -261,8 +255,11 @@ function! go#coverage#overlay(file) abort
     autocmd BufWinLeave <buffer> call go#coverage#Clear()
   augroup end
 
+  sign define goCoverageCovered text=✔️
+  sign define goCoverageUncover text=❌
+
   for m in matches
-    call matchaddpos(m.group, m.pos)
+    exe ":sign place 2 line=" . m.pos . " name=" . m.group . " file=" . expand("%:p")
   endfor
 endfunction
 

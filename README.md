@@ -1,5 +1,7 @@
 # vim-go [![Build Status](http://img.shields.io/travis/fatih/vim-go.svg?style=flat-square)](https://travis-ci.org/fatih/vim-go)
 
+my own vim-go branch... because I'm a special snowflake...
+
 <p align="center">
   <img style="float: right;" src="assets/vim-go.png" alt="Vim-go logo"/>
 </p>
